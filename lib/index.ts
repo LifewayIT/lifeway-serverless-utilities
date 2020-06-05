@@ -1,3 +1,3 @@
+export { default as logger } from './logger';
 export * from './response';
-export { default as log } from './logs';
 export * from './request';
