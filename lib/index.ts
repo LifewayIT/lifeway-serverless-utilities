@@ -1,3 +1,3 @@
 export * from './response';
-export * from './logs';
+export { default as log } from './logs';
 export * from './request';

@@ -76,3 +76,15 @@ export const addRequestIdHeaders = (event: APIGatewayEvent, context: Context) =>
 };
 
 export const rejectWithStatus = (statusCode: number) => (error: Error) => Promise.reject({ ...error, statusCode });
+
+interface Error {
+  name: string;
+  message: string;
+  stack?: string;
+  statusCode?: number;
+}
+
+export const errorResponse = (error: Error): APIGatewayProxyResult =>
+  error?.statusCode
+    ? response(error.statusCode, error)
+    : response(500,  error);
