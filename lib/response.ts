@@ -74,3 +74,5 @@ export const addRequestIdHeaders = (event: APIGatewayEvent, context: Context) =>
     }
   };
 };
+
+export const rejectWithStatus = (statusCode: number) => (error: Error) => Promise.reject({ ...error, statusCode });
