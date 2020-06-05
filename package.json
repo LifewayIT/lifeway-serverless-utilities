@@ -1,0 +1,29 @@
+{
+  "name": "@lifeway/serverless-utilites",
+  "version": "0.0.2",
+  "description": "AWS Serverless utilities created and used by Lifeway.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "private": false,
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sls",
+    "utils",
+    "tsc"
+  ],
+  "author": "charlie.thomas@lifeway.com",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^14.0.11",
+    "jest": "^26.0.1",
+    "typescript": "^3.9.5"
+  },
+  "dependencies": {
+    "@types/aws-lambda": "^8.10.53",
+    "loglevel": "^1.6.8"
+  }
+}
