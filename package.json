@@ -5,6 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "private": false,
+  "repository": "https://github.com/LifewayIT/lifeway-serverless-utilities",
+  "readme": "https://github.com/LifewayIT/lifeway-serverless-utilities/blob/master/README.md",
   "scripts": {
     "prepublish": "npm run build",
     "build": "tsc",
