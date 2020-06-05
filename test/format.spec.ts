@@ -1,4 +1,4 @@
-import { formatJson, formatError, format } from "../lib/format";
+import { formatJson, formatError, format, formatMessages } from "../lib/format";
 
 class CustomError extends Error {
   constructor(message: string) {
@@ -61,8 +61,7 @@ describe('format', () => {
 describe('formatMessages', () => {
   it('formats a list of messages', () => {
     const stringifiedList = formatMessages(['message', { foo: 'bar' }]);
-
-    expect(stringifiedList).toBeArrayOfSize(2);
+    expect(stringifiedList.length).toEqual(2);
     expect(stringifiedList[0]).toEqual('message');
     expect(JSON.parse(stringifiedList[1])).toEqual({ foo: 'bar' });
   });
