@@ -59,3 +59,5 @@ export const logger = {
     critical: tap(expandedLogger.critical),
   }
 };
+
+export default logger;
