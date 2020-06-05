@@ -33,7 +33,7 @@ const setContentByContentType = (res: any, data: any) => {
     : { ...res, body: data };
 };
 
-export const response = (statusCode: number, data: any, { headers = {}, ...options } = {}) => {
+export const response = (statusCode: number, data: any, { headers = {}, ...options }: any = {}) => {
   const res = {
     isBase64Encoded: false,
     headers: {

@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@types/aws-lambda": "^8.10.53",
+    "jest-extended": "^0.11.5",
     "loglevel": "^1.6.8"
   }
 }
