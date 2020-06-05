@@ -1,34 +1,34 @@
-import logger from 'loglevel';
+import loglevel from 'loglevel';
 import { tap } from './utils/functional';
 import { formatMessages } from './format';
 
 const level: string = process.env.LOG_LEVEL ?? 'DEBUG';
 
 interface Level {
-  [key:string]: logger.LogLevelDesc;
+  [key:string]: loglevel.LogLevelDesc;
 }
 
 const levels: Level = {
-  [logger.levels.TRACE]: 'TRACE',
-  [logger.levels.DEBUG]: 'DEBUG',
-  [logger.levels.INFO]: 'INFO',
-  [logger.levels.WARN]: 'WARN',
-  [logger.levels.ERROR]: 'ERROR',
-  [logger.levels.SILENT]: 'SILENT',
+  [loglevel.levels.TRACE]: 'TRACE',
+  [loglevel.levels.DEBUG]: 'DEBUG',
+  [loglevel.levels.INFO]: 'INFO',
+  [loglevel.levels.WARN]: 'WARN',
+  [loglevel.levels.ERROR]: 'ERROR',
+  [loglevel.levels.SILENT]: 'SILENT',
 
-  TRACE: logger.levels.TRACE,
-  DEBUG: logger.levels.DEBUG,
-  INFO: logger.levels.INFO,
-  WARN: logger.levels.WARN,
-  ERROR: logger.levels.ERROR,
-  SILENT: logger.levels.SILENT
+  TRACE: loglevel.levels.TRACE,
+  DEBUG: loglevel.levels.DEBUG,
+  INFO: loglevel.levels.INFO,
+  WARN: loglevel.levels.WARN,
+  ERROR: loglevel.levels.ERROR,
+  SILENT: loglevel.levels.SILENT
 };
 
-const defaultLevel = levels[level] ?? logger.levels.INFO;
-logger.setDefaultLevel(defaultLevel);
+const defaultLevel = levels[level] ?? loglevel.levels.INFO;
+loglevel.setDefaultLevel(defaultLevel);
 
-const originalFactory = logger.methodFactory;
-logger.methodFactory = (methodName, logLevel, loggerName) => {
+const originalFactory = loglevel.methodFactory;
+loglevel.methodFactory = (methodName, logLevel, loggerName) => {
   const originalMethod = originalFactory(methodName, logLevel, loggerName);
 
   return (...messages) => {
@@ -39,16 +39,16 @@ logger.methodFactory = (methodName, logLevel, loggerName) => {
   };
 };
 
-logger.setLevel(logger.getLevel());
+loglevel.setLevel(loglevel.getLevel());
 
 const expandedLogger = {
-  ...logger,
+  ...loglevel,
   critical: (...args: any[]) => {
-    logger.error('<CRITICAL>', ...args);
+    loglevel.error('<CRITICAL>', ...args);
   },
 };
 
-export default {
+export const logger = {
   ...expandedLogger,
   tap: {
     trace: tap(expandedLogger.trace),
