@@ -1,6 +1,5 @@
-
-import log from './logger';
 import { APIGatewayProxyResult, APIGatewayEvent, Context } from 'aws-lambda';
+import { logger } from './logger';
 
 const logPrefix = '[RESPONSE]';
 
@@ -48,7 +47,7 @@ export const response = (statusCode: number, data: any, { headers = {}, ...optio
 };
 
 export const validateResponse = async (response: APIGatewayProxyResult) => {
-  log.debug(logPrefix, 'Validating response', response);
+  logger.debug(logPrefix, 'Validating response', response);
   const contentType = response?.headers?.['Content-Type'];
   const isValid =
     (response?.statusCode && typeof response.statusCode === 'number') &&
@@ -56,7 +55,7 @@ export const validateResponse = async (response: APIGatewayProxyResult) => {
     (!response?.headers || typeof response.headers === 'object');
 
   if (!isValid) {
-    log.error(logPrefix, 'Constructed response is invalid', response);
+    logger.error(logPrefix, 'Constructed response is invalid', response);
     return Promise.reject('Response is invalid');
   }
 
@@ -64,7 +63,7 @@ export const validateResponse = async (response: APIGatewayProxyResult) => {
 };
 
 export const addRequestIdHeaders = (event: APIGatewayEvent, context: Context) => (response: APIGatewayProxyResult) => {
-  log.debug(logPrefix, 'Adding request headers', event, context, response);
+  logger.debug(logPrefix, 'Adding request headers', event, context, response);
   return {
     ...response,
     headers: {
