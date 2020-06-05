@@ -1,5 +1,5 @@
 
-import log from './logs';
+import log from './logger';
 import { APIGatewayProxyResult, APIGatewayEvent, Context } from 'aws-lambda';
 
 const logPrefix = '[RESPONSE]';

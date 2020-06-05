@@ -1,5 +1,5 @@
 import logger from 'loglevel';
-import { tap } from '../utils/functional';
+import { tap } from './utils/functional';
 import { formatMessages } from './format';
 
 const level: string = process.env.LOG_LEVEL ?? 'DEBUG';
