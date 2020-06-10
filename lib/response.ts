@@ -78,16 +78,14 @@ export const errorResponse = (error: Error): APIGatewayProxyResult =>
     : response(500,  error);
 
 export const addRequestIdHeaders =
-  (event: APIGatewayEvent, context?: Context) =>
+  (event: APIGatewayEvent) =>
   (response: APIGatewayProxyResult): APIGatewayProxyResult => {
-    if (!context) return response;
-    logger.debug(logPrefix, 'Adding request headers', event, context, response);
+    logger.debug(logPrefix, 'Adding request headers', event, response);
     return {
       ...response,
       headers: {
-        ...response?.headers,
-        'x-aws-request-id': context?.awsRequestId,
-        'x-request-context-id': event?.requestContext?.requestId,
+        ...response.headers,
+        'x-aws-request-id': event.requestContext.requestId,
       }
   };
 };

@@ -39,7 +39,7 @@ export const httpHandler =
       .then(optionalRequestMiddleware(scope, validateScope(scope)))
       .then(({ event, context }) => handler(event, context))
       .then(optionalResponseMiddleware(cors, addCorsHeaders(event)))
-      .then(optionalResponseMiddleware(requestIdHeaders, addRequestIdHeaders(event, context)))
+      .then(optionalResponseMiddleware(requestIdHeaders, addRequestIdHeaders(event)))
       .then(tap(logger.debug))
       .catch(errorResponse)
 };

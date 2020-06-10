@@ -14,6 +14,9 @@ describe('httpHandler', () => {
     mockHandler.mockResolvedValue({ statusCode: 200 })
     const event = {
       httpMethod: 'GET',
+      requestContext: {
+        requestId: 'id'
+      }
     } as APIGatewayEvent;
     return httpHandler(mockHandler)(event)
       .then(res => {
