@@ -1,5 +1,6 @@
 import { APIGatewayProxyResult, APIGatewayEvent, Context } from 'aws-lambda';
 import { logger } from './logger';
+import { getOrigin } from './request';
 
 const logPrefix = '[RESPONSE]';
 
@@ -62,18 +63,6 @@ export const validateResponse = async (response: APIGatewayProxyResult) => {
   return response;
 };
 
-export const addRequestIdHeaders = (event: APIGatewayEvent, context: Context) => (response: APIGatewayProxyResult) => {
-  logger.debug(logPrefix, 'Adding request headers', event, context, response);
-  return {
-    ...response,
-    headers: {
-      ...response.headers,
-      'x-aws-request-id': context?.awsRequestId,
-      'x-request-context-id': event?.requestContext?.requestId,
-    }
-  };
-};
-
 export const rejectWithStatus = (statusCode: number) => (error: Error) => Promise.reject({ ...error, statusCode });
 
 interface Error {
@@ -87,3 +76,18 @@ export const errorResponse = (error: Error): APIGatewayProxyResult =>
   error?.statusCode
     ? response(error.statusCode, error)
     : response(500,  error);
+
+export const addRequestIdHeaders =
+  (event: APIGatewayEvent, context?: Context) =>
+  (response: APIGatewayProxyResult): APIGatewayProxyResult => {
+    if (!context) return response;
+    logger.debug(logPrefix, 'Adding request headers', event, context, response);
+    return {
+      ...response,
+      headers: {
+        ...response?.headers,
+        'x-aws-request-id': context?.awsRequestId,
+        'x-request-context-id': event?.requestContext?.requestId,
+      }
+  };
+};
