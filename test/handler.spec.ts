@@ -1,6 +1,6 @@
-import { httpHandler } from "../lib/handler";
 import { APIGatewayEvent } from 'aws-lambda';
 import { validateScope } from "../lib/jwt";
+import { httpHandler } from '../lib';
 
 jest.mock('../lib/jwt');
 

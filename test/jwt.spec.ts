@@ -1,6 +1,6 @@
 import { decode } from 'jsonwebtoken';
-import { getDecodedJwt, validateScope } from '../lib/jwt';
 import { APIGatewayEvent } from 'aws-lambda';
+import { getDecodedJwt, validateScope } from '../lib';
 
 jest.mock('jsonwebtoken');
 

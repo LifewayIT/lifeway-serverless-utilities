@@ -1,5 +1,5 @@
-import { addCorsHeaders, isAllowedOrigin } from '../lib/cors';
 import { internet } from 'faker';
+import { isAllowedOrigin, addCorsHeaders } from '../lib';
 
 test('origin is allowed if included in ALLOWED_ORIGINS environment variable', () => {
   const origin = internet.domainName();
