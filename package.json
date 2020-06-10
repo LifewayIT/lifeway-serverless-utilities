@@ -9,7 +9,7 @@
   "readme": "https://github.com/LifewayIT/lifeway-serverless-utilities/blob/master/README.md",
   "scripts": {
     "prepublish": "npm run build",
-    "build": "tsc",
+    "build": "rm -rf ./dist && tsc",
     "test": "jest"
   },
   "keywords": [
