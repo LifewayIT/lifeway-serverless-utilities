@@ -6,5 +6,12 @@
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true
-  }
+  },
+  "include": [
+    "lib/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }
