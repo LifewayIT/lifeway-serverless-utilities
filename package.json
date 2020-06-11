@@ -9,7 +9,7 @@
   "readme": "https://github.com/LifewayIT/lifeway-serverless-utilities/blob/master/README.md",
   "scripts": {
     "type-check": "tsc --noEmit",
-    "version-check": "VERSION=$(npm view . version) node ./scripts/versionCheck.js",
+    "version-check": "node ./scripts/versionCheck.js",
     "prepublish": "npm run build",
     "publish": "npm publish",
     "build": "rm -rf ./dist && tsc",

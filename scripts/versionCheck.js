@@ -1,6 +1,6 @@
 const versionExists = require('version-exists')
 
-const version = process.env.VERSION;
+const version = process.env.npm_package_version;
 
 versionExists('@lifeway/serverless-utilities', version)
   .then(exists => {
