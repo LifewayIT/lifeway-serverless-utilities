@@ -14,8 +14,8 @@ jobs:
     context: rundmg
     steps:
       - run:
-        name: npm/publish
-        command: npm publish
+          name: npm/publish
+          command: npm publish
 
 workflows:
   checks-deploy:
