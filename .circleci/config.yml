@@ -8,6 +8,13 @@ executors:
     docker:
       - image: circleci/node:12
 
+jobs:
+  publish:
+    steps:
+      - run:
+        name: npm/publish
+        command: npm publish
+
 workflows:
   checks-deploy:
     jobs:
@@ -37,11 +44,9 @@ workflows:
           executor: node
           requires:
             - npm/install
-      - npm/run-script:
+      - publish:
           executor: node
           context: rundmg
-          name: publish
-          script: publish
           requires:
             - npm/test
             - npm/audit

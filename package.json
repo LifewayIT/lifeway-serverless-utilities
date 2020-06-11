@@ -11,7 +11,6 @@
     "type-check": "tsc --noEmit",
     "version-check": "node ./scripts/versionCheck.js",
     "prepublish": "npm run build",
-    "publish": "npm publish",
     "build": "rm -rf ./dist && tsc",
     "test": "jest"
   },
