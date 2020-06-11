@@ -1,0 +1,52 @@
+version: 2.1
+
+orbs:
+  npm: lifeway/npm-tools@0.0.6
+
+executors:
+  node:
+    docker:
+      - image: circleci/node:12
+
+workflows:
+  checks-deploy:
+    jobs:
+      - npm/install:
+          context: rundmg
+          executor: node
+      - npm/run-script:
+          context: rundmg
+          executor: node
+          name: type-check
+          script: type-check
+          requires:
+            - npm/install
+      - npm/run-script:
+          context: rundmg
+          executor: node
+          name: version-check
+          script: version-check
+          requires:
+            - npm/install
+      - npm/audit:
+          context: rundmg
+          requires:
+            - npm/install
+      - npm/test:
+          context: rundmg
+          executor: node
+          requires:
+            - npm/install
+      - npm/run-script:
+          executor: node
+          context: rundmg
+          name: publish
+          script: publish
+          requires:
+            - npm/test
+            - npm/audit
+            - type-check
+            - version-check
+          filters:
+            branches:
+              only: master

@@ -1,6 +1,6 @@
 {
   "name": "@lifeway/serverless-utilities",
-  "version": "0.1.8",
+  "version": "0.1.10",
   "description": "AWS Serverless utilities created and used by Lifeway.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +8,10 @@
   "repository": "https://github.com/LifewayIT/lifeway-serverless-utilities",
   "readme": "https://github.com/LifewayIT/lifeway-serverless-utilities/blob/master/README.md",
   "scripts": {
+    "type-check": "tsc --noEmit",
+    "version-check": "node ./scripts/versionCheck.js",
     "prepublish": "npm run build",
+    "publish": "npm publish",
     "build": "rm -rf ./dist && tsc",
     "test": "jest"
   },
@@ -28,7 +31,8 @@
     "jest": "^26.0.1",
     "jest-extended": "^0.11.5",
     "ts-jest": "^26.1.0",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.5",
+    "version-exists": "0.0.4"
   },
   "dependencies": {
     "@types/aws-lambda": "^8.10.53",
