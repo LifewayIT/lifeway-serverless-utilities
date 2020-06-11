@@ -15,21 +15,25 @@ workflows:
           context: rundmg
           executor: node
       - npm/run-script:
+          context: rundmg
           executor: node
           name: type-check
           script: type-check
           requires:
             - npm/install
       - npm/run-script:
+          context: rundmg
           executor: node
           name: version-check
           script: version-check
           requires:
             - npm/install
       - npm/audit:
+          context: rundmg
           requires:
             - npm/install
       - npm/test:
+          context: rundmg
           executor: node
           requires:
             - npm/install
