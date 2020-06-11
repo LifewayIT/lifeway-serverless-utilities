@@ -1,6 +1,6 @@
 {
   "name": "@lifeway/serverless-utilities",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "AWS Serverless utilities created and used by Lifeway.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
