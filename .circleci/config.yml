@@ -10,6 +10,8 @@ executors:
 
 jobs:
   publish:
+    executor: node
+    context: rundmg
     steps:
       - run:
         name: npm/publish
@@ -45,8 +47,6 @@ workflows:
           requires:
             - npm/install
       - publish:
-          executor: node
-          context: rundmg
           requires:
             - npm/test
             - npm/audit
