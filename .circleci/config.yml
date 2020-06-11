@@ -12,6 +12,7 @@ workflows:
   checks-deploy:
     jobs:
       - npm/install:
+          context: rundmg
           executor: node
       - npm/run-script:
           executor: node
