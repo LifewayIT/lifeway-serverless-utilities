@@ -12,6 +12,8 @@ jobs:
   publish:
     executor: node
     steps:
+      - attach_workspace:
+          at: ./
       - run:
           name: npm/publish
           command: npm publish
