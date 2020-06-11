@@ -5,7 +5,7 @@ const version = process.env.VERSION;
 versionExists('@lifeway/serverless-utilities', version)
   .then(exists => {
     if(exists) {
-      console.error('Package version already exists.');
+      console.error(`Package version ${version} already exists.`);
       process.exit(-1);
     } else {
       console.info(`${version} does not exist for package`);
