@@ -1,2 +1,7 @@
 lib/
 test/
+.circleci/
+scripts/
+jest.config.js
+CODEOWNERS
+tsconfig.json
