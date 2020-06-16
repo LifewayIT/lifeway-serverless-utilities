@@ -1,6 +1,6 @@
 {
   "name": "@lifeway/serverless-utilities",
-  "version": "0.1.14",
+  "version": "0.1.13",
   "description": "AWS Serverless utilities created and used by Lifeway.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -11,7 +11,7 @@
     "type-check": "tsc --noEmit",
     "version-check": "node ./scripts/versionCheck.js",
     "unpack-dist": "mv ./dist/* .",
-    "prepublish": "npm run build",
+    "prepublish": "npm run build && npm run unpack-dist",
     "build": "rm -rf ./dist && tsc",
     "test": "jest"
   },
