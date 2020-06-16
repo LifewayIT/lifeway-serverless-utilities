@@ -72,10 +72,12 @@ interface Error {
   statusCode?: number;
 }
 
-export const errorResponse = (error: Error): APIGatewayProxyResult =>
-  error?.statusCode
+export const errorResponse = (error: Error): APIGatewayProxyResult => {
+  logger.error(error);
+  return error.statusCode
     ? response(error.statusCode, error)
     : response(500,  error);
+}
 
 export const addRequestIdHeaders =
   (event: APIGatewayEvent) =>
