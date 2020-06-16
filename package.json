@@ -1,16 +1,17 @@
 {
   "name": "@lifeway/serverless-utilities",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "AWS Serverless utilities created and used by Lifeway.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "private": false,
   "repository": "https://github.com/LifewayIT/lifeway-serverless-utilities",
   "readme": "https://github.com/LifewayIT/lifeway-serverless-utilities/blob/master/README.md",
   "scripts": {
     "type-check": "tsc --noEmit",
     "version-check": "node ./scripts/versionCheck.js",
-    "prepublish": "npm run build",
+    "unpack-dist": "mv ./dist/* .",
+    "prepublish": "npm run build && npm run unpack-dist",
     "build": "rm -rf ./dist && tsc",
     "test": "jest"
   },
