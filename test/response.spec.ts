@@ -1,4 +1,5 @@
 import { response } from '../lib';
+import { rejectWithStatus } from '../lib/response';
 
 describe('build', () => {
   test('build basic response with only statusCode', () => {
@@ -40,4 +41,12 @@ describe('build', () => {
     const data = false;
     expect(JSON.parse(response(200, data).body)).toEqual({ value: data });
   });
+});
+
+test('reject with status does not override statusCode of existing error', async () => {
+  const res = Promise
+    .reject({ statusCode: 420, message: 'tateisapoop' })
+    .catch(rejectWithStatus(406));
+
+  await expect(res).rejects.toEqual({ statusCode: 420, message: 'tateisapoop' })
 });

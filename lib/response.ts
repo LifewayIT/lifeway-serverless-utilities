@@ -63,7 +63,7 @@ export const validateResponse = async (response: APIGatewayProxyResult) => {
   return response;
 };
 
-export const rejectWithStatus = (statusCode: number) => (error: Error) => Promise.reject({ ...error, statusCode });
+export const rejectWithStatus = (statusCode: number) => (error: Error) => Promise.reject({ statusCode, ...error,  });
 
 interface Error {
   name: string;
