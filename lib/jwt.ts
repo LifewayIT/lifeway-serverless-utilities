@@ -2,11 +2,13 @@ import { decode } from 'jsonwebtoken';
 import { APIGatewayEvent } from 'aws-lambda';
 import { RequestMiddleware, RequestMiddlewareMetadata } from './handler';
 
-export const getDecodedJwt = (event: APIGatewayEvent): any =>
-  event.headers?.authorization && decode(
-    event.headers.authorization.replace('Bearer ', ''),
+export const getDecodedJwt = (event: APIGatewayEvent): any => {
+  const authHeader = event.headers?.authorization ?? event.headers?.Authorization;
+  return authHeader && decode(
+    authHeader.replace('Bearer ', ''),
     { complete: true }
   );
+}
 
 export const validateScope =
   (scope?: string): RequestMiddleware =>
