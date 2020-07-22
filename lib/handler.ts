@@ -1,6 +1,7 @@
 
 import { APIGatewayEvent, Context, APIGatewayProxyResult } from 'aws-lambda';
 import { validateScope } from './jwt';
+import { validateApiKey } from './apiKey';
 import { addCorsHeaders } from './cors';
 import { addRequestIdHeaders, errorResponse } from './response';
 import { tap } from './utils/functional';
@@ -11,6 +12,7 @@ type Handler = (event: APIGatewayEvent, context?: Context) => Promise<APIGateway
 type HttpHandlerOptions = {
   scope?: string,
   cors?: boolean,
+  apiKeys?: string[],
   requestIdHeaders?: boolean
 };
 
@@ -21,7 +23,7 @@ export type RequestMiddlewareMetadata = {
 export type RequestMiddleware = (md: RequestMiddlewareMetadata) => RequestMiddlewareMetadata | Promise<RequestMiddlewareMetadata>;
 const RequestIdentity = (md: RequestMiddlewareMetadata) => md;
 const optionalRequestMiddleware =
-  (option: boolean | string | undefined, requestMiddleware: RequestMiddleware) =>
+  (option: boolean | string | string[] | undefined, requestMiddleware: RequestMiddleware) =>
     option ? requestMiddleware : RequestIdentity;
 
 export type ResponseMiddleware = (response: APIGatewayProxyResult) => APIGatewayProxyResult | Promise<APIGatewayProxyResult>;
@@ -33,10 +35,11 @@ const optionalResponseMiddleware =
 export const httpHandler =
   (handler: Handler, options?: HttpHandlerOptions) =>
   (event: APIGatewayEvent, context?: Context): Promise<APIGatewayProxyResult> => {
-    const { scope, cors, requestIdHeaders } = options ?? { requestIdHeaders: true };
+    const { scope, cors, requestIdHeaders, apiKeys } = options ?? { requestIdHeaders: true };
     return Promise
       .resolve({ event, context })
       .then(optionalRequestMiddleware(scope, validateScope(scope)))
+      .then(optionalRequestMiddleware(apiKeys, validateApiKey(apiKeys)))
       .then(({ event, context }) => handler(event, context))
       .then(optionalResponseMiddleware(cors, addCorsHeaders(event)))
       .then(optionalResponseMiddleware(requestIdHeaders, addRequestIdHeaders(event)))
