@@ -1,6 +1,5 @@
-import { APIGatewayProxyResult, APIGatewayEvent, Context } from 'aws-lambda';
+import { APIGatewayProxyResult, APIGatewayEvent  } from 'aws-lambda';
 import { logger } from './logger';
-import { getOrigin } from './request';
 
 const logPrefix = '[RESPONSE]';
 
@@ -38,7 +37,9 @@ export const response = (statusCode: number, data: any, { headers = {}, ...optio
   const res = {
     isBase64Encoded: false,
     headers: {
-      // Placeholder for Default Headers
+      'Cache-control': 'no-store',
+      'Pragma': 'no-cache',
+      'Expires': '0',
       ...headers
     },
     ...options,
@@ -73,7 +74,7 @@ interface Error {
 }
 
 export const errorResponse = (error: Error): APIGatewayProxyResult => {
-  logger.error(error);
+  logger.error(logPrefix, error);
   return error.statusCode
     ? response(error.statusCode, error)
     : response(500,  error);

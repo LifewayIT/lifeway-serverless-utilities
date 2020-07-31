@@ -4,13 +4,21 @@ import { rejectWithStatus } from '../lib/response';
 describe('build', () => {
   test('build basic response with only statusCode', () => {
     const statusCode = 200;
-    expect(response(statusCode, undefined)).toEqual({ isBase64Encoded: false, statusCode, headers: {} });
+    const defaultHeaders = {
+      'Cache-control': 'no-store',
+      'Expires': '0',
+      'Pragma': 'no-cache',
+    };
+    const result = response(statusCode, undefined);
+    expect(result.isBase64Encoded).toEqual(false);
+    expect(result.statusCode).toEqual(statusCode);
+    expect(result.headers).toEqual(defaultHeaders);
   });
 
   test('build response overwriting default headers', () => {
     const headers = { 'content-type': 'application/js' };
-    expect(response(200, undefined, { headers }))
-      .toEqual(expect.objectContaining({ headers }));
+    expect(response(200, undefined, { headers }).headers)
+      .toEqual(expect.objectContaining(headers));
   });
 
   test('build response overwriting default options', () => {
