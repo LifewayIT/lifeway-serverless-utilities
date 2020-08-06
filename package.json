@@ -17,6 +17,8 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm run validate && npm run version-check",
     "test": "jest",
+    "test:coverage": "jest --collectCoverage",
+    "test:watch": "jest --watch",
     "type-check": "tsc --noEmit",
     "validate": "npm run audit && npm run lint && npm run type-check && npm run test",
     "version-check": "node ./scripts/versionCheck.js"
