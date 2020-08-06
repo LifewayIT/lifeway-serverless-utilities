@@ -12,6 +12,7 @@
     "version-check": "node ./scripts/versionCheck.js",
     "unpack-dist": "cp -r dist/* .",
     "prepublish": "npm run build && npm run unpack-dist",
+    "audit": "audit-ci --high",
     "build": "rm -rf ./dist && tsc",
     "test": "jest"
   },
