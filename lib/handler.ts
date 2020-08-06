@@ -5,7 +5,7 @@ import { validateApiKey } from './apiKey';
 import { addCorsHeaders } from './cors';
 import { addRequestIdHeaders, errorResponse } from './response';
 import { tap } from './utils/functional';
-import logger from './logger';
+import { logger } from './logger';
 
 type Handler = (event: APIGatewayEvent, context?: Context) => Promise<APIGatewayProxyResult>
 
