@@ -1,4 +1,5 @@
-const versionExists = require('version-exists')
+/* eslint-disable no-console */
+const versionExists = require('version-exists');
 
 const version = process.env.npm_package_version;
 
@@ -15,4 +16,4 @@ versionExists('@lifeway/serverless-utilities', version)
   .then(error => {
     console.error(error);
     process.exit(-1);
-  })
+  });

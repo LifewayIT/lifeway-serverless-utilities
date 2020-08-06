@@ -8,14 +8,14 @@ export const getDecodedJwt = (event: APIGatewayEvent): any => {
     authHeader.replace('Bearer ', ''),
     { complete: true }
   );
-}
+};
 
 export const validateScope =
   (scope?: string): RequestMiddleware =>
-  async (md: RequestMiddlewareMetadata) => {
-    const claims = getDecodedJwt(md.event)?.payload;
-    if (!claims?.scope?.includes(scope)) {
-      return Promise.reject({ statusCode: 403, message: `Must have scope ${scope}` });
-    }
-    return md;
-};
+    async (md: RequestMiddlewareMetadata) => {
+      const claims = getDecodedJwt(md.event)?.payload;
+      if (!claims?.scope?.includes(scope)) {
+        return Promise.reject({ statusCode: 403, message: `Must have scope ${scope}` });
+      }
+      return md;
+    };

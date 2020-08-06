@@ -1,6 +1,6 @@
-type Formatable = Error | object | string
+type Formatable = Error | Record<string, unknown> | string
 
-export const formatJson = (data: object) => JSON.stringify(data, null, 2);
+export const formatJson = (data: Record<string, unknown>) => JSON.stringify(data, null, 2);
 
 export const formatError = (error: Error) => formatJson({
   name: error.name,

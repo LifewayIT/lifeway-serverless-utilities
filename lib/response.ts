@@ -64,7 +64,7 @@ export const validateResponse = async (response: APIGatewayProxyResult) => {
   return response;
 };
 
-export const rejectWithStatus = (statusCode: number) => (error: Error) => Promise.reject({ statusCode, ...error,  });
+export const rejectWithStatus = (statusCode: number) => (error: Error) => Promise.reject({ statusCode, ...error  });
 
 interface Error {
   name: string;
@@ -78,17 +78,17 @@ export const errorResponse = (error: Error): APIGatewayProxyResult => {
   return error.statusCode
     ? response(error.statusCode, error)
     : response(500,  error);
-}
+};
 
 export const addRequestIdHeaders =
   (event: APIGatewayEvent) =>
-  (response: APIGatewayProxyResult): APIGatewayProxyResult => {
-    logger.debug(logPrefix, 'Adding request headers', event, response);
-    return {
-      ...response,
-      headers: {
-        ...response.headers,
-        'x-aws-request-id': event.requestContext.requestId,
-      }
-  };
-};
+    (response: APIGatewayProxyResult): APIGatewayProxyResult => {
+      logger.debug(logPrefix, 'Adding request headers', event, response);
+      return {
+        ...response,
+        headers: {
+          ...response.headers,
+          'x-aws-request-id': event.requestContext.requestId,
+        }
+      };
+    };

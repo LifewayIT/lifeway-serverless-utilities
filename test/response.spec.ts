@@ -56,5 +56,5 @@ test('reject with status does not override statusCode of existing error', async 
     .reject({ statusCode: 420, message: 'tateisapoop' })
     .catch(rejectWithStatus(406));
 
-  await expect(res).rejects.toEqual({ statusCode: 420, message: 'tateisapoop' })
+  await expect(res).rejects.toEqual({ statusCode: 420, message: 'tateisapoop' });
 });

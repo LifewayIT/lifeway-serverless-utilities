@@ -1,6 +1,6 @@
 import { RequestMiddlewareMetadata } from './handler';
 
-export const validateApiKey = (apiKeys?: string[]) => 
+export const validateApiKey = (apiKeys?: string[]) =>
   async (md: RequestMiddlewareMetadata) => {
     const requestedApiKey =  md.event.headers?.['x-api-key'];
     if (!apiKeys?.includes(requestedApiKey)) {
