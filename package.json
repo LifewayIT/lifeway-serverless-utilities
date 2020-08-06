@@ -22,21 +22,23 @@
   ],
   "author": "charlie.thomas@lifeway.com",
   "license": "ISC",
+  "dependencies": {
+    "@types/aws-lambda": "^8.10.53",
+    "jsonwebtoken": "^8.5.1",
+    "loglevel": "^1.6.8"
+  },
   "devDependencies": {
     "@types/faker": "^4.1.12",
     "@types/jest": "^25.2.3",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/node": "^14.0.11",
+    "audit-ci": "^3.1.1",
+    "eslint-config-corinth": "github:lifewayit/eslint-config-corinth",
     "faker": "^4.1.0",
     "jest": "^26.0.1",
     "jest-extended": "^0.11.5",
     "ts-jest": "^26.1.0",
     "typescript": "^3.9.5",
     "version-exists": "0.0.4"
-  },
-  "dependencies": {
-    "@types/aws-lambda": "^8.10.53",
-    "jsonwebtoken": "^8.5.1",
-    "loglevel": "^1.6.8"
   }
 }
