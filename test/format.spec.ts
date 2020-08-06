@@ -1,4 +1,4 @@
-import { formatJson, formatError, format, formatMessages } from "../lib/format";
+import { formatJson, formatError, format, formatMessages } from '../lib/format';
 
 class CustomError extends Error {
   constructor(message: string) {

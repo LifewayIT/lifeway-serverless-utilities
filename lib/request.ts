@@ -9,6 +9,6 @@ export const parseBody = (event: APIGatewayEvent) =>
       : event.body
   );
 
-  export const getUserId = (event: APIGatewayEvent) => event.requestContext?.authorizer?.principalId;
+export const getUserId = (event: APIGatewayEvent) => event.requestContext?.authorizer?.principalId;
 
-  export const getSub = (event: APIGatewayEvent) => event.requestContext?.authorizer?.claims?.sub;
+export const getSub = (event: APIGatewayEvent) => event.requestContext?.authorizer?.claims?.sub;

@@ -8,7 +8,7 @@ beforeEach(() => {
   jest.resetAllMocks();
 });
 
-const event = { headers: { authorization: 'Bearer something' }} as any as APIGatewayEvent
+const event = { headers: { authorization: 'Bearer something' }} as any as APIGatewayEvent;
 test('decode', async () => {
   (decode as jest.Mock).mockReturnValue({ foo: 'bar' });
   getDecodedJwt(event);

@@ -34,15 +34,15 @@ const optionalResponseMiddleware =
 
 export const httpHandler =
   (handler: Handler, options?: HttpHandlerOptions) =>
-  (event: APIGatewayEvent, context?: Context): Promise<APIGatewayProxyResult> => {
-    const { scope, cors, requestIdHeaders, apiKeys } = options ?? { requestIdHeaders: true };
-    return Promise
-      .resolve({ event, context })
-      .then(optionalRequestMiddleware(scope, validateScope(scope)))
-      .then(optionalRequestMiddleware(apiKeys, validateApiKey(apiKeys)))
-      .then(({ event, context }) => handler(event, context))
-      .then(optionalResponseMiddleware(cors, addCorsHeaders(event)))
-      .then(optionalResponseMiddleware(requestIdHeaders, addRequestIdHeaders(event)))
-      .then(tap(logger.debug))
-      .catch(errorResponse)
-};
+    (event: APIGatewayEvent, context?: Context): Promise<APIGatewayProxyResult> => {
+      const { scope, cors, requestIdHeaders, apiKeys } = options ?? { requestIdHeaders: true };
+      return Promise
+        .resolve({ event, context })
+        .then(optionalRequestMiddleware(scope, validateScope(scope)))
+        .then(optionalRequestMiddleware(apiKeys, validateApiKey(apiKeys)))
+        .then(({ event, context }) => handler(event, context))
+        .then(optionalResponseMiddleware(cors, addCorsHeaders(event)))
+        .then(optionalResponseMiddleware(requestIdHeaders, addRequestIdHeaders(event)))
+        .then(tap(logger.debug))
+        .catch(errorResponse);
+    };

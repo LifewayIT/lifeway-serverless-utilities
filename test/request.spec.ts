@@ -1,4 +1,4 @@
-import { getOrigin, parseBody, getSub, getUserId } from "../lib";
+import { getOrigin, parseBody, getSub, getUserId } from '../lib';
 
 test('event origin is returned from origin header', () => {
   const event: any = { headers: { origin: 'localhost' } };
@@ -32,11 +32,12 @@ test('getSub', () => {
       }
     }
   }} as any)).toEqual('id');
-})
+});
+
 test('getUserId', () => {
   expect(getUserId({ requestContext: {
     authorizer: {
       principalId: 'id'
     }
   }} as any)).toEqual('id');
-})
+});

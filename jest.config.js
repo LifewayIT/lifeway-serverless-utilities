@@ -1,12 +1,8 @@
 module.exports = {
-  "roots": [
-    "<rootDir>/test"
-  ],
-  "testMatch": [
-    "**/?(*.)+(spec|test).+(ts|tsx|js)"
-  ],
-  "transform": {
-    "^.+\\.(ts|tsx)$": "ts-jest"
+  roots: ['<rootDir>/test'],
+  setupFilesAfterEnv: ['jest-extended'],
+  testMatch: ['**/?(*.)+(spec|test).+(ts|js)'],
+  transform: {
+    '^.+\\.(ts)$': 'ts-jest'
   },
-  'setupFilesAfterEnv': ['jest-extended'],
-}
+};

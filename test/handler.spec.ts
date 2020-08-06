@@ -1,5 +1,5 @@
 import { APIGatewayEvent } from 'aws-lambda';
-import { validateScope } from "../lib/jwt";
+import { validateScope } from '../lib/jwt';
 import { httpHandler } from '../lib';
 
 jest.mock('../lib/jwt');
@@ -11,7 +11,7 @@ describe('httpHandler', () => {
   });
   const mockHandler = jest.fn();
   test('returns 200 with no options passed', async () => {
-    mockHandler.mockResolvedValue({ statusCode: 200 })
+    mockHandler.mockResolvedValue({ statusCode: 200 });
     const event = {
       httpMethod: 'GET',
       requestContext: {
