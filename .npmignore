@@ -2,7 +2,6 @@ lib/
 test/
 .circleci/
 scripts/
-dist/
 jest.config.js
 CODEOWNERS
 tsconfig.json
