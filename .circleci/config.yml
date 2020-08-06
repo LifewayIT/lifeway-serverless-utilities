@@ -48,6 +48,7 @@ workflows:
           requires:
             - npm/install
       - npm/run-script:
+          context: *team-context
           executor: node
           name: lint
           script: lint
