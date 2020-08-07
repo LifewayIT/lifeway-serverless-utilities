@@ -13,7 +13,7 @@ import {
   buildData,
   ProxiedRouteRule,
   HttpResponse,
-} from '../lib/proxy';
+} from '../lib';
 
 const mockHttpClient = new MockAdapter(axios);
 const userId = random.uuid();

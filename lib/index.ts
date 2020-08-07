@@ -5,3 +5,4 @@ export * from './handler';
 export * from './cors';
 export * from './jwt';
 export * from './apiKey';
+export * from './proxy';
