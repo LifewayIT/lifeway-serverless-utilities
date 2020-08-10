@@ -41,8 +41,8 @@ export interface ProxiedUpstreamRequest {
 }
 
 export interface ProxiedRouteRule {
-  upstreamRequest: ProxiedUpstreamRequest;
-  incomingRequest?: ProxiedIncomingRequest;
+  incomingRequest: ProxiedIncomingRequest;
+  upstreamRequest?: ProxiedUpstreamRequest;
   responseTransformer?: (response: APIGatewayProxyResult) => HttpResponse;
   scope?: string;
 }
@@ -52,16 +52,19 @@ export const findMatchingRoutingRule = (
   routingRules: ProxiedRouteRule[],
 ) =>
   routingRules.find(({ incomingRequest }) =>
-    (incomingRequest?.path && pathToRegexp(incomingRequest.path)?.test(event?.resource)) &&
+    (incomingRequest?.path && (
+      new RegExp(incomingRequest.path)?.test(event?.resource) ||
+      pathToRegexp(incomingRequest.path)?.test(event?.resource)
+    ) &&
     (
       !incomingRequest?.method || // match any method
       incomingRequest?.method?.toUpperCase() === event?.httpMethod?.toUpperCase()
     )
-  );
+    ));
 
 export const validateRouteRule = async (routeRule: ProxiedRouteRule) => {
   logger.debug(logPrefix, 'Validating route rule', routeRule);
-  const isValid = routeRule?.upstreamRequest?.url;
+  const isValid = routeRule?.incomingRequest?.path;
   if (!isValid) {
     const message = 'Route rule is not valid';
     logger.critical(logPrefix, message, routeRule);
@@ -165,13 +168,13 @@ export const handleProxiedRequest = async (
   return validateRouteRule(routeRule)
     .then(({ upstreamRequest }: ProxiedRouteRule) => replacePathParameters(
       event,
-      upstreamRequest.url,
-      upstreamRequest.pathParameters
+      upstreamRequest?.url ? upstreamRequest.url : event?.path,
+      upstreamRequest?.pathParameters
     ))
     .then(url => forward(
       {
         url,
-        method: routeRule.upstreamRequest.method || event?.httpMethod as Method,
+        method: routeRule.upstreamRequest?.method || event?.httpMethod as Method,
         data: buildData(event, routeRule),
         params: buildParams(event, routeRule),
         headers: buildHeaders(event, routeRule),

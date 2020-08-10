@@ -73,6 +73,17 @@ describe('findMatchingRoutingRule', () => {
     const matchingRule = findMatchingRoutingRule(event, [rule]);
     expect(matchingRule).toBeUndefined();
   });
+
+  test('route rule matches when path as regular expression matches resource', () => {
+    const rule = {
+      incomingRequest: {
+        path: '.*',
+      },
+      upstreamRequest: {},
+    };
+    const matchingRule = findMatchingRoutingRule(event, [rule]);
+    expect(matchingRule).toEqual(rule);
+  });
 });
 
 describe('replacePathParameters', () => {
@@ -106,7 +117,7 @@ describe('buildParams', () => {
     const event = {
       requestContext: {
         authorizer: {
-          claims:{
+          claims: {
             sub: userId
           }
         }
@@ -118,6 +129,9 @@ describe('buildParams', () => {
     const result = buildParams(
       event as APIGatewayEvent,
       {
+        incomingRequest: {
+          path: '.*',
+        },
         upstreamRequest: {
           params: {
             userId: (event: APIGatewayEvent) => event?.requestContext?.authorizer?.claims?.sub,
@@ -140,7 +154,7 @@ describe('buildHeaders', () => {
     const event = {
       requestContext: {
         authorizer: {
-          claims:{
+          claims: {
             sub: userId
           }
         }
@@ -152,6 +166,9 @@ describe('buildHeaders', () => {
     const result = buildHeaders(
       event as APIGatewayEvent,
       {
+        incomingRequest: {
+          path: '.*',
+        },
         upstreamRequest: {
           headers: {
             userId: (event: APIGatewayEvent) => event?.requestContext?.authorizer?.claims?.sub,
@@ -173,7 +190,7 @@ describe('buildData', () => {
     const event = {
       requestContext: {
         authorizer: {
-          claims:{
+          claims: {
             sub: userId
           }
         }
@@ -185,6 +202,9 @@ describe('buildData', () => {
     const result = buildData(
       event as APIGatewayEvent,
       {
+        incomingRequest: {
+          path: '.*',
+        },
         upstreamRequest: {
           data: {
             userId: (event: APIGatewayEvent) => event?.requestContext?.authorizer?.claims?.sub,
@@ -205,7 +225,7 @@ describe('buildData', () => {
     const event = {
       requestContext: {
         authorizer: {
-          claims:{
+          claims: {
             sub: userId
           }
         }
@@ -215,6 +235,9 @@ describe('buildData', () => {
     const result = buildData(
       event as APIGatewayEvent,
       {
+        incomingRequest: {
+          path: '.*',
+        },
         upstreamRequest: {
           data: [
             (event: APIGatewayEvent) => event?.requestContext?.authorizer?.claims?.sub,
@@ -235,7 +258,7 @@ describe('buildData', () => {
     const event = {
       requestContext: {
         authorizer: {
-          claims:{
+          claims: {
             sub: userId
           }
         }
@@ -245,6 +268,9 @@ describe('buildData', () => {
     const result = buildData(
       event as APIGatewayEvent,
       {
+        incomingRequest: {
+          path: '.*',
+        },
         upstreamRequest: {
         }
       }
@@ -298,6 +324,9 @@ describe('handleProxiedRequest', () => {
     const data = { created: true };
     mockHttpClient.onAny(upstreamUrl).reply(statusCode, data);
     const routeRule = {
+      incomingRequest: {
+        path: '.*',
+      },
       upstreamRequest: {
         url: upstreamUrl,
         method: 'POST' as Method,
@@ -323,6 +352,9 @@ describe('handleProxiedRequest', () => {
     const statusCode = 204;
     mockHttpClient.onAny(upstreamUrl).reply(statusCode);
     const routeRule = {
+      incomingRequest: {
+        path: '.*',
+      },
       upstreamRequest: {
         url: upstreamUrl,
       }
@@ -344,6 +376,9 @@ describe('handleProxiedRequest', () => {
     const transformedStatusCode = 403;
     mockHttpClient.onAny(upstreamUrl).reply(401);
     const routeRule = {
+      incomingRequest: {
+        path: '.*',
+      },
       upstreamRequest: {
         url: upstreamUrl,
       },
@@ -364,7 +399,10 @@ describe('handleProxiedRequest', () => {
   test('return 500 when route rule is not valid', async () => {
     const event = {} as unknown;
     const routeRule = {
-      upstreamRequest: {},
+      incomingRequest: {
+        path: '',
+      },
+      upstreamRequest: {}
     };
     return handleProxiedRequest(event as APIGatewayEvent, routeRule)
       .then(res => {
@@ -376,6 +414,9 @@ describe('handleProxiedRequest', () => {
     const upstreamUrl = '/upstream';
     const event = {};
     const routeRule = {
+      incomingRequest: {
+        path: '.*',
+      },
       upstreamRequest: {
         url: upstreamUrl
       }
