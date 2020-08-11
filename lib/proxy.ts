@@ -50,17 +50,19 @@ export interface ProxiedRouteRule {
 export const findMatchingRoutingRule = (
   event: APIGatewayEvent,
   routingRules: ProxiedRouteRule[],
-) =>
-  routingRules.find(({ incomingRequest }) =>
+) => {
+  logger.debug(logPrefix, 'Finding Route', { event, routingRules });
+  return routingRules.find(({ incomingRequest }) =>
     (incomingRequest?.path && (
       new RegExp(incomingRequest.path)?.test(event?.resource) ||
       pathToRegexp(incomingRequest.path)?.test(event?.resource)
     ) &&
-    (
-      !incomingRequest?.method || // match any method
-      incomingRequest?.method?.toUpperCase() === event?.httpMethod?.toUpperCase()
-    )
+      (
+        !incomingRequest?.method || // match any method
+        incomingRequest?.method?.toUpperCase() === event?.httpMethod?.toUpperCase()
+      )
     ));
+};
 
 export const validateRouteRule = async (routeRule: ProxiedRouteRule) => {
   logger.debug(logPrefix, 'Validating route rule', routeRule);
@@ -96,6 +98,7 @@ const mapUpstreamObjectToConfig = (event: APIGatewayEvent, obj: Record<string, u
     Object
       .entries(obj)
       .map(([key, value]) => [key, typeof value === 'function' ? value(event) : value])
+      .filter(([key, value]) => typeof value !== 'undefined')
   );
 
 export const buildParams = (event: APIGatewayEvent, routeRule: ProxiedRouteRule) => ({
@@ -193,11 +196,12 @@ export const handleProxiedRequest = async (
 
 export const proxy = (routingRules: ProxiedRouteRule[], config: AxiosRequestConfig, options?: { scope?: string, }) =>
   (event: APIGatewayEvent, context?: Context) => {
+    logger.debug(logPrefix, 'Routing', { event, context, routingRules, config, options });
     const rule = findMatchingRoutingRule(event, routingRules);
     return httpHandler((event: APIGatewayEvent) => {
       logger.debug(logPrefix, 'Attempting to proxy route', event, routingRules, config);
       return rule
         ? handleProxiedRequest(event, rule, config)
         : response(405, 'Incoming request is not proxied');
-    }, { scope: rule?.scope || options?.scope }) (event, context);
+    }, { scope: rule?.scope || options?.scope })(event, context);
   };

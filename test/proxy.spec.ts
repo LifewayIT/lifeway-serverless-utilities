@@ -172,7 +172,8 @@ describe('buildHeaders', () => {
         upstreamRequest: {
           headers: {
             userId: (event: APIGatewayEvent) => event?.requestContext?.authorizer?.claims?.sub,
-            size: 1
+            size: 1,
+            shouldNotBePassed: (event: APIGatewayEvent) => undefined,
           }
         }
       }
