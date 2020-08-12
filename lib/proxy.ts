@@ -51,7 +51,7 @@ export const findMatchingRoutingRule = (
   event: APIGatewayEvent,
   routingRules: ProxiedRouteRule[],
 ) => {
-  logger.debug(logPrefix, 'Finding Route', { event, routingRules });
+  logger.debug(logPrefix, 'Finding Matching Route Rule --', { routingRules, event: { resource: event?.resource, httpMethod: event?.httpMethod } });
   return routingRules.find(({ incomingRequest }) =>
     (incomingRequest?.path && (
       new RegExp(incomingRequest.path)?.test(event?.resource) ||
@@ -65,7 +65,7 @@ export const findMatchingRoutingRule = (
 };
 
 export const validateRouteRule = async (routeRule: ProxiedRouteRule) => {
-  logger.debug(logPrefix, 'Validating route rule', routeRule);
+  logger.debug(logPrefix, 'Validating Route Rule --', routeRule);
   const isValid = routeRule?.incomingRequest?.path;
   if (!isValid) {
     const message = 'Route rule is not valid';
@@ -136,6 +136,7 @@ export interface HttpResponse {
 }
 
 const resolve = async (response: AxiosResponse): Promise<HttpResponse> => {
+  logWithInspect(logger.debug, 'Upstream Response --', response);
   const { status, data, headers } = response;
   return Promise.resolve({
     statusCode: status,
@@ -146,10 +147,10 @@ const resolve = async (response: AxiosResponse): Promise<HttpResponse> => {
 
 export const handleError = async (error: AxiosError) => {
   if (error?.response) {
-    logWithInspect(logger.info, 'Request was not successful --', error);
+    logWithInspect(logger.info, 'Upstream Request was not Successful --', error);
     return resolve(error.response);
   } else if (error?.request) {
-    logger.error(logPrefix, 'Failed to make request --', error);
+    logger.error(logPrefix, 'Failed to Make Upstream Request --', error);
     return Promise.reject(error.request);
   } else {
     logger.error(logPrefix, 'Network Error --', error);
@@ -157,17 +158,19 @@ export const handleError = async (error: AxiosError) => {
   }
 };
 
-export const forward = async (config: AxiosRequestConfig, axios: AxiosInstance = DefaultAxios) =>
-  axios(config)
+export const forward = async (config: AxiosRequestConfig, axios: AxiosInstance = DefaultAxios) => {
+  logger.debug(logPrefix, 'Forwarding Request to Upstream Service --', config);
+  return axios(config)
     .then(resolve)
     .catch(handleError);
+};
 
 export const handleProxiedRequest = async (
   event: APIGatewayEvent,
   routeRule: ProxiedRouteRule,
   config?: AxiosRequestConfig
 ) => {
-  logger.debug(logPrefix, 'Proxying route', { event, routeRule, config });
+  logger.debug(logPrefix, 'Handling Request --', { event, routeRule, config });
   return validateRouteRule(routeRule)
     .then(({ upstreamRequest }: ProxiedRouteRule) => replacePathParameters(
       event,
@@ -196,12 +199,13 @@ export const handleProxiedRequest = async (
 
 export const proxy = (routingRules: ProxiedRouteRule[], config: AxiosRequestConfig, options?: { scope?: string, }) =>
   (event: APIGatewayEvent, context?: Context) => {
-    logger.debug(logPrefix, 'Routing', { event, context, routingRules, config, options });
+    logger.debug(logPrefix, 'Attempting to Proxy Route --', { event, routingRules, config, options });
     const rule = findMatchingRoutingRule(event, routingRules);
-    return httpHandler((event: APIGatewayEvent) => {
-      logger.debug(logPrefix, 'Attempting to proxy route', event, routingRules, config);
-      return rule
-        ? handleProxiedRequest(event, rule, config)
-        : response(405, 'Incoming request is not proxied');
-    }, { scope: rule?.scope || options?.scope })(event, context);
+    return httpHandler(
+      (event: APIGatewayEvent) =>
+        rule
+          ? handleProxiedRequest(event, rule, config)
+          : response(405, 'Incoming request is not proxied'),
+      { scope: rule?.scope || options?.scope }
+    )(event, context);
   };
