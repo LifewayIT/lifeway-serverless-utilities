@@ -1,4 +1,4 @@
-import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import { APIGatewayEvent, Context } from 'aws-lambda';
 import DefaultAxios, { AxiosInstance, Method, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
 import fromEntries from 'object.fromentries';
 import { pathToRegexp } from 'path-to-regexp';
@@ -40,10 +40,16 @@ export interface ProxiedUpstreamRequest {
   config?: AxiosRequestConfig;
 }
 
+export interface HttpResponse {
+  statusCode: number;
+  data?: any;
+  headers?: any;
+}
+
 export interface ProxiedRouteRule {
   incomingRequest: ProxiedIncomingRequest;
   upstreamRequest?: ProxiedUpstreamRequest;
-  responseTransformer?: (response: APIGatewayProxyResult) => HttpResponse;
+  responseTransformer?: (response: HttpResponse, event: APIGatewayEvent) => HttpResponse;
   scope?: string;
 }
 
@@ -129,12 +135,6 @@ export const buildData = (event: APIGatewayEvent, routeRule: ProxiedRouteRule) =
   }
 };
 
-export interface HttpResponse {
-  statusCode: number;
-  data?: any;
-  headers?: any;
-}
-
 const resolve = async (response: AxiosResponse): Promise<HttpResponse> => {
   logWithInspect(logger.debug, 'Upstream Response --', response);
   const { status, data, headers } = response;
@@ -188,12 +188,12 @@ export const handleProxiedRequest = async (
         ...routeRule?.upstreamRequest?.config,
       }
     ))
-    .then(({ statusCode, data }) => response(statusCode, data))
     .then(response =>
       routeRule.responseTransformer
-        ? routeRule.responseTransformer(response)
+        ? routeRule.responseTransformer(response, event)
         : response
     )
+    .then(({ statusCode, data }) => response(statusCode, data))
     .catch(logAndReturnErrorResponse);
 };
 

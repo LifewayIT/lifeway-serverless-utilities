@@ -397,6 +397,37 @@ describe('handleProxiedRequest', () => {
       });
   });
 
+  test('transform response using event when defined', async () => {
+    const event = {
+      httpMethod: 'GET',
+      pathParameters: { id: '2' }
+    } as unknown;
+    const upstreamUrl = '/upstream';
+
+    type Item = { id: string, name: string };
+    mockHttpClient.onAny(upstreamUrl).reply<Item[]>(200, [{ id: '1', name: 'one' }, { id: '2', name: 'two' }]);
+
+    const routeRule = {
+      incomingRequest: {
+        path: '.*',
+      },
+      upstreamRequest: {
+        url: upstreamUrl,
+      },
+      responseTransformer: (response: HttpResponse, evt: APIGatewayEvent) => ({
+        ...response,
+        data: response.data?.filter((item: Item) => item.id === evt.pathParameters?.id)
+      }),
+    };
+    return handleProxiedRequest(event as APIGatewayEvent, routeRule)
+      .then(res => {
+        expect(JSON.parse(res.body)).toEqual([{ id: '2', name: 'two' }]);
+        expect(mockHttpClient.history.get).toHaveLength(1);
+        const mockedRequest = mockHttpClient.history.get[0];
+        expect(mockedRequest.method).toEqual('get');
+      });
+  });
+
   test('return 500 when route rule is not valid', async () => {
     const event = {} as unknown;
     const routeRule = {
