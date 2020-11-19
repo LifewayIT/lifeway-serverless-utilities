@@ -414,11 +414,9 @@ describe('handleProxiedRequest', () => {
       upstreamRequest: {
         url: upstreamUrl,
       },
-      responseTransformer: (response: APIGatewayProxyResult, evt: APIGatewayEvent) => ({
+      responseTransformer: (response: HttpResponse, evt: APIGatewayEvent) => ({
         ...response,
-        body: JSON.stringify(
-          JSON.parse(response.body)?.filter((item: Item) => item.id === evt.pathParameters?.id)
-        )
+        data: response.data?.filter((item: Item) => item.id === evt.pathParameters?.id)
       }),
     };
     return handleProxiedRequest(event as APIGatewayEvent, routeRule)
