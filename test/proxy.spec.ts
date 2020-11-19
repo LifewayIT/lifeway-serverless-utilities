@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, Method } from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { random } from 'faker';
-import { APIGatewayEvent } from 'aws-lambda';
+import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda';
 import {
   findMatchingRoutingRule,
   replacePathParameters,
@@ -394,6 +394,39 @@ describe('handleProxiedRequest', () => {
         expect(mockHttpClient.history.put).toHaveLength(1);
         const mockedRequest = mockHttpClient.history.put[0];
         expect(mockedRequest.method).toEqual('put');
+      });
+  });
+
+  test('transform response using event when defined', async () => {
+    const event = {
+      httpMethod: 'GET',
+      pathParameters: { id: '2' }
+    } as unknown;
+    const upstreamUrl = '/upstream';
+
+    type Item = { id: string, name: string };
+    mockHttpClient.onAny(upstreamUrl).reply<Item[]>(200, [{ id: '1', name: 'one' }, { id: '2', name: 'two' }]);
+
+    const routeRule = {
+      incomingRequest: {
+        path: '.*',
+      },
+      upstreamRequest: {
+        url: upstreamUrl,
+      },
+      responseTransformer: (response: APIGatewayProxyResult, evt: APIGatewayEvent) => ({
+        ...response,
+        body: JSON.stringify(
+          JSON.parse(response.body)?.filter((item: Item) => item.id === evt.pathParameters?.id)
+        )
+      }),
+    };
+    return handleProxiedRequest(event as APIGatewayEvent, routeRule)
+      .then(res => {
+        expect(JSON.parse(res.body)).toEqual([{ id: '2', name: 'two' }]);
+        expect(mockHttpClient.history.get).toHaveLength(1);
+        const mockedRequest = mockHttpClient.history.get[0];
+        expect(mockedRequest.method).toEqual('get');
       });
   });
 

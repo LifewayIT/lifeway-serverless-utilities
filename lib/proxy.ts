@@ -43,7 +43,7 @@ export interface ProxiedUpstreamRequest {
 export interface ProxiedRouteRule {
   incomingRequest: ProxiedIncomingRequest;
   upstreamRequest?: ProxiedUpstreamRequest;
-  responseTransformer?: (response: APIGatewayProxyResult) => HttpResponse;
+  responseTransformer?: (response: APIGatewayProxyResult, event: APIGatewayEvent) => HttpResponse;
   scope?: string;
 }
 
@@ -191,7 +191,7 @@ export const handleProxiedRequest = async (
     .then(({ statusCode, data }) => response(statusCode, data))
     .then(response =>
       routeRule.responseTransformer
-        ? routeRule.responseTransformer(response)
+        ? routeRule.responseTransformer(response, event)
         : response
     )
     .catch(logAndReturnErrorResponse);
