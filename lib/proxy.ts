@@ -1,4 +1,4 @@
-import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import { APIGatewayEvent, Context } from 'aws-lambda';
 import DefaultAxios, { AxiosInstance, Method, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
 import fromEntries from 'object.fromentries';
 import { pathToRegexp } from 'path-to-regexp';

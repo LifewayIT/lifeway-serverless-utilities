@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, Method } from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { random } from 'faker';
-import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayEvent } from 'aws-lambda';
 import {
   findMatchingRoutingRule,
   replacePathParameters,
