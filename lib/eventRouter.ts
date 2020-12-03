@@ -104,7 +104,7 @@ const processInOrder = async (events: any, routerRules: any) => {
     } else {
       const promise = Promise.all(handlers.map((handler: any) => handler(event).catch(handleError)));
       const res = await promise;
-      logger.debug(logPrefix, `Event handlers processed event ${event.id} with result: [ ${res.join(' | ')} ]`);
+      logger.debug(logPrefix, `Event handlers processed event ${event.id} with result:`, res);
       results.push(res);
     }
   }
@@ -131,12 +131,13 @@ const getHandlersForLifewayEvent = (routerRules: any, event: any) => {
 
 const handleResults = (results: any, events: any) => {
   if (results.length === 0) {
-    const msg = `${logPrefix} No handlers triggered for events [ ${events.map((event: any) => event.eventType).join(' | ')} ]`;
+    const msg = `${logPrefix} No handlers triggered for events: ${JSON.stringify(events.map((event: any) => event.eventType))}`;
     logger.info(msg);
     return msg;
   }
+  logger.debug(JSON.stringify(results, null, 2));
 
-  const msg = `${logPrefix} Completed processing ${events.length} event(s): [ ${results.join(' | ')} ]`;
+  const msg = `${logPrefix} Completed processing ${events.length} event(s): ${JSON.stringify(results.flat())}`;
   logger.info(msg);
   return msg;
 };

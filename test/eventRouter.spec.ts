@@ -54,7 +54,7 @@ describe('eventRouter', () => {
     return EventRouter.route(exampleRules, { source: 'SNS', gaurenteeOrder: true })(generateSNSEvent('TateTookLunch', { foo: 'bar'}))
       .then(res => {
         expect(tateHandler).toHaveBeenCalledTimes(1);
-        expect(res).toContain('Completed processing 1 event(s): [ Yay ]');
+        expect(res).toContain('Completed processing 1 event(s): ["Yay"]');
       });
   });
 
@@ -73,7 +73,7 @@ describe('eventRouter', () => {
     return EventRouter.route(exampleRules, { source: 'SNS', gaurenteeOrder: false })(generateSNSEvent('CharlieTookLunch', { foo: 'bar'}))
       .then(res => {
         expect(charlieHandler).toHaveBeenCalledTimes(1);
-        expect(res).toContain('Completed processing 1 event(s): [ Yay ]');
+        expect(res).toContain('Completed processing 1 event(s): ["Yay"]');
       });
   });
 
@@ -83,7 +83,7 @@ describe('eventRouter', () => {
     return EventRouter.route(exampleRules, { source: 'SNS', gaurenteeOrder: false })(generateSNSEvent('TeamLunchHappened', { foo: 'bar'}))
       .then(res => {
         expect(charlieHandler).toHaveBeenCalledTimes(1);
-        expect(res).toContain('Completed processing 1 event(s): [ Yay,Yay ]');
+        expect(res).toContain('Completed processing 1 event(s): ["Yay","Yay"]');
       });
   });
 
@@ -92,7 +92,7 @@ describe('eventRouter', () => {
     return EventRouter.route(exampleRules, { source: 'kinesis', gaurenteeOrder: true })(generateKinesisEvent([{eventType: 'TateTookLunch', payload: { foo: 'bar'}}]))
       .then(res => {
         expect(tateHandler).toHaveBeenCalledTimes(1);
-        expect(res).toContain('Completed processing 1 event(s): [ Yay ]');
+        expect(res).toContain(`Completed processing 1 event(s): ["Yay"]`);
       });
   });
 
@@ -104,7 +104,7 @@ describe('eventRouter', () => {
     ]))
       .then(res => {
         expect(tateHandler).toHaveBeenCalledTimes(1);
-        expect(res).toContain('Completed processing 2 event(s): [ No handlers defined for eventType TateUpdatedSlackStatus | Yay ]');
+        expect(res).toContain('Completed processing 2 event(s): ["No handlers defined for eventType TateUpdatedSlackStatus","Yay"]');
       });
   });
 
@@ -123,7 +123,7 @@ describe('eventRouter', () => {
       .then(res => {
         expect(tateHandler).toHaveBeenCalledTimes(2);
         expect(charlieHandler).toHaveBeenCalledTimes(2);
-        expect(res).toContain('Completed processing 3 event(s): [ Yay | Yay | Yay,Yay ]');
+        expect(res).toContain('Completed processing 3 event(s): ["Yay","Yay","Yay","Yay"]');
       });
   });
 
@@ -134,7 +134,7 @@ describe('eventRouter', () => {
       .then(res => {
         expect(charlieHandler).not.toHaveBeenCalled();
         expect(tateHandler).not.toHaveBeenCalled();
-        expect(res).toContain('No handlers triggered for events [ NoSuchEvent ]');
+        expect(res).toContain('No handlers triggered for events: ["NoSuchEvent"]');
       });
   });
 
