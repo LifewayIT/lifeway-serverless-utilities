@@ -1,4 +1,4 @@
-import { APIGatewayEvent, Context } from 'aws-lambda';
+import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import DefaultAxios, { AxiosInstance, Method, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
 import fromEntries from 'object.fromentries';
 import { pathToRegexp } from 'path-to-regexp';
@@ -20,9 +20,16 @@ const logWithInspect = (logFn: (...args: unknown[]) => void, message: unknown, .
   logFn(logPrefix, message, ...inspectedArgs);
 };
 
+const isResponse = (error: unknown): error is APIGatewayProxyResult =>
+  typeof error === 'object' && error != null && 'statusCode' in error;
+
 const logAndReturnErrorResponse = (error: unknown) => {
   logger.error(logPrefix, error);
-  return response(500, 'Internal Server Error');
+  if (isResponse(error)) {
+    return error;
+  } else {
+    return response(500, 'Internal Server Error');
+  }
 };
 
 export interface ProxiedIncomingRequest {
@@ -50,6 +57,7 @@ export interface ProxiedRouteRule {
   incomingRequest: ProxiedIncomingRequest;
   upstreamRequest?: ProxiedUpstreamRequest;
   responseTransformer?: (response: HttpResponse, event: APIGatewayEvent) => HttpResponse;
+  authorization?: (event: APIGatewayEvent) => Promise<boolean>;
   scope?: string;
 }
 
@@ -172,6 +180,18 @@ export const handleProxiedRequest = async (
 ) => {
   logger.debug(logPrefix, 'Handling Request --', { event, routeRule, config });
   return validateRouteRule(routeRule)
+    .then(({ authorization }: ProxiedRouteRule) => {
+      if (authorization) {
+        logger.debug(logPrefix, 'Checking Request Authorization --', { event });
+        return authorization(event)
+          .then((authorized) => authorized
+            ? Promise.resolve(routeRule)
+            : Promise.reject(response(403, 'Unauthorized'))
+          );
+      } else {
+        return routeRule;
+      }
+    })
     .then(({ upstreamRequest }: ProxiedRouteRule) => replacePathParameters(
       event,
       upstreamRequest?.url ? upstreamRequest.url : event?.path,

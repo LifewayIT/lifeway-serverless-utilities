@@ -428,6 +428,74 @@ describe('handleProxiedRequest', () => {
       });
   });
 
+  test('checks authorization before routing request', async () => {
+    const event = {
+      resource: '/route',
+      httpMethod: 'GET',
+    } as unknown;
+
+    const upstreamUrl = '/upstream';
+    const statusCode = 200;
+    const data = { thing: 'something' };
+    mockHttpClient.onAny(upstreamUrl).reply(statusCode, data);
+
+    const authorization = jest.fn().mockResolvedValue(true);
+
+    const routeRule = {
+      incomingRequest: {
+        path: '.*',
+      },
+      upstreamRequest: {
+        url: upstreamUrl,
+        method: 'GET' as Method,
+      },
+      authorization
+    };
+
+
+    return handleProxiedRequest(event as APIGatewayEvent, routeRule, {})
+      .then(res => {
+        expect(authorization).toHaveBeenCalledWith(event);
+
+        expect(res.statusCode).toEqual(statusCode);
+        expect(JSON.parse(res.body)).toEqual(data);
+        expect(mockHttpClient.history.get).toHaveLength(1);
+      });
+  });
+
+  test('return 403 when authorization fails', async () => {
+    const event = {
+      resource: '/route',
+      httpMethod: 'GET',
+    } as unknown;
+
+    const upstreamUrl = '/upstream';
+    const statusCode = 200;
+    const data = { thing: 'something' };
+    mockHttpClient.onAny(upstreamUrl).reply(statusCode, data);
+
+    const authorization = jest.fn().mockResolvedValue(false);
+
+    const routeRule = {
+      incomingRequest: {
+        path: '.*',
+      },
+      upstreamRequest: {
+        url: upstreamUrl,
+        method: 'GET' as Method,
+      },
+      authorization
+    };
+
+    return handleProxiedRequest(event as APIGatewayEvent, routeRule, {})
+      .then(res => {
+        expect(authorization).toHaveBeenCalledWith(event);
+
+        expect(res.statusCode).toEqual(403);
+        expect(mockHttpClient.history.get).toHaveLength(0);
+      });
+  });
+
   test('return 500 when route rule is not valid', async () => {
     const event = {} as unknown;
     const routeRule = {
@@ -457,6 +525,35 @@ describe('handleProxiedRequest', () => {
     return handleProxiedRequest(event as APIGatewayEvent, routeRule)
       .then(res => {
         expect(res.statusCode).toEqual(500);
+      });
+  });
+
+  test('return 500 if error occurs while checking authorization', async () => {
+    const event = {
+      resource: '/route',
+      httpMethod: 'GET',
+    } as unknown;
+
+    const upstreamUrl = '/upstream';
+    const authorization = jest.fn().mockRejectedValue('something went wrong');
+
+    const routeRule = {
+      incomingRequest: {
+        path: '.*',
+      },
+      upstreamRequest: {
+        url: upstreamUrl,
+        method: 'GET' as Method,
+      },
+      authorization
+    };
+
+    return handleProxiedRequest(event as APIGatewayEvent, routeRule, {})
+      .then(res => {
+        expect(authorization).toHaveBeenCalledWith(event);
+
+        expect(res.statusCode).toEqual(500);
+        expect(mockHttpClient.history.get).toHaveLength(0);
       });
   });
 });
