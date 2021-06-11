@@ -197,17 +197,22 @@ export const handleProxiedRequest = async (
       upstreamRequest?.url ? upstreamRequest.url : event?.path,
       upstreamRequest?.pathParameters
     ))
-    .then(url => forward(
-      {
+    .then(url => {
+      const { headers: commonHeaders, ...baseConfig } = config ?? {};
+
+      return forward({
         url,
         method: routeRule.upstreamRequest?.method || event?.httpMethod as Method,
         data: buildData(event, routeRule),
         params: buildParams(event, routeRule),
-        headers: buildHeaders(event, routeRule),
-        ...config,
+        headers: {
+          ...commonHeaders,
+          ...buildHeaders(event, routeRule)
+        },
+        ...baseConfig,
         ...routeRule?.upstreamRequest?.config,
-      }
-    ))
+      });
+    })
     .then(response =>
       routeRule.responseTransformer
         ? routeRule.responseTransformer(response, event)
