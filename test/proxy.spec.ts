@@ -369,6 +369,52 @@ describe('handleProxiedRequest', () => {
       });
   });
 
+  test('forward request with custom headers and common config headers', async () => {
+    const event = {
+      httpMethod: 'PUT',
+      body: JSON.stringify({ key: 'event-value' }),
+    } as unknown;
+
+    const upstreamUrl = '/upstream';
+    const statusCode = 201;
+    const data = { created: true };
+
+    mockHttpClient.onAny(upstreamUrl).reply(statusCode, data);
+
+    const routeRule = {
+      incomingRequest: {
+        path: '.*',
+      },
+      upstreamRequest: {
+        url: upstreamUrl,
+        method: 'POST' as const,
+        headers: {
+          Key: (e: APIGatewayEvent) => e.body != null
+            ? JSON.parse(e.body)?.key
+            : null
+        }
+      }
+    };
+
+    const config = {
+      headers: { 'x-custom': 'config-value' }
+    };
+
+    return handleProxiedRequest(event as APIGatewayEvent, routeRule, config)
+      .then(res => {
+        expect(res.statusCode).toEqual(statusCode);
+        expect(JSON.parse(res.body)).toEqual(data);
+
+        expect(mockHttpClient.history.post).toHaveLength(1);
+        const mockedRequest = mockHttpClient.history.post[0];
+        expect(mockedRequest.method).toEqual('post');
+        expect(mockedRequest.headers).toEqual(expect.objectContaining({
+          ...config.headers,
+          Key: 'event-value'
+        }));
+      });
+  });
+
   test('transform response when defined on the route rule', async () => {
     const event = {
       httpMethod: 'PUT',
