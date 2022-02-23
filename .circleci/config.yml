@@ -38,8 +38,11 @@ workflows:
           script: version-check
           requires:
             - npm/install
-      - npm/audit:
+      - npm/run-script:
           context: *team-context
+          executor: node
+          name: audit
+          script: audit
           requires:
             - npm/install
       - npm/test:
@@ -58,7 +61,7 @@ workflows:
           context: *team-context
           requires:
             - npm/test
-            - npm/audit
+            - audit
             - lint
             - type-check
             - version-check
