@@ -651,7 +651,7 @@ describe('proxy', () => {
     expect(JSON.parse(response.body)).toEqual({ message: 'Incoming request is not proxied' });
   });
 
-  test.only('use existing axios instance to make upstream request', async () => {
+  test('use existing axios instance to make upstream request', async () => {
     const incomingPath = '/incoming';
     const upstreamUrl = '/upstream';
     const event = {
