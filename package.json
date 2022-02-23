@@ -11,7 +11,7 @@
   "repository": "https://github.com/LifewayIT/lifeway-serverless-utilities",
   "readme": "https://github.com/LifewayIT/lifeway-serverless-utilities/blob/master/README.md",
   "scripts": {
-    "audit": "audit-ci --high",
+    "audit": "audit-ci --high --allowlist 1005560",
     "build": "rm -rf ./dist && tsc",
     "lint": "eslint --ext js,ts .",
     "prepare": "npm run build",
@@ -46,7 +46,7 @@
     "@types/object.fromentries": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
-    "audit-ci": "^3.1.1",
+    "audit-ci": "^5.1.2",
     "aws-lambda": "^1.0.6",
     "axios-mock-adapter": "^1.18.2",
     "eslint": "^7.6.0",
