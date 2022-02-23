@@ -650,4 +650,31 @@ describe('proxy', () => {
     expect(response.statusCode).toEqual(405);
     expect(JSON.parse(response.body)).toEqual({ message: 'Incoming request is not proxied' });
   });
+
+  test.only('use existing axios instance to make upstream request', async () => {
+    const incomingPath = '/incoming';
+    const upstreamUrl = '/upstream';
+    const event = {
+      resource: incomingPath,
+      httpMethod: 'GET',
+    };
+    const routeRules = [
+      {
+        incomingRequest: {
+          path: incomingPath,
+        },
+        upstreamRequest: {
+          url: upstreamUrl,
+        },
+      },
+    ];
+    const config = {};
+    const statusCode = 200;
+    const data = { key: 'value' };
+    const mockAxiosInstance = new MockAdapter(axios);
+    mockAxiosInstance.onAny().reply(statusCode, data);
+    const response = await proxy(routeRules, config, { upstreamRequestOptions: { axiosInstance: axios }})(event as APIGatewayEvent);
+    expect(response.statusCode).toEqual(statusCode);
+    expect(JSON.parse(response.body)).toEqual(data);
+  });
 });
