@@ -11,7 +11,7 @@
   "repository": "https://github.com/LifewayIT/lifeway-serverless-utilities",
   "readme": "https://github.com/LifewayIT/lifeway-serverless-utilities/blob/master/README.md",
   "scripts": {
-    "audit": "audit-ci --high --allowlist 1005560",
+    "audit": "audit-ci --high --allowlist 1005560 1006899",
     "build": "rm -rf ./dist && tsc",
     "lint": "eslint --ext js,ts .",
     "prepare": "npm run build",
